@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - DICD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <span class="font-bold text-xl text-gray-800">DICD Student Portal</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="user-name" class="text-gray-700"></span>
+                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="text-3xl font-bold mb-8">Welcome to Your Learning Portal</h1>
+
+        <!-- Tabs -->
+        <div class="mb-6 border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8">
+                <button onclick="showTab('my-courses')" id="tab-my-courses" 
+                        class="tab-btn border-b-2 border-purple-600 text-purple-600 py-4 px-1 font-medium">
+                    My Courses
+                </button>
+                <button onclick="showTab('browse-courses')" id="tab-browse-courses" 
+                        class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 font-medium">
+                    Browse Courses
+                </button>
+            </nav>
+        </div>
+
+        <!-- My Courses Tab -->
+        <div id="content-my-courses" class="tab-content">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold mb-4">My Enrolled Courses</h2>
+                <div id="enrolled-courses" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                <div id="no-enrollments" class="hidden text-center py-12 text-gray-500">
+                    <i class="fas fa-book-open text-5xl mb-4"></i>
+                    <p>You haven't enrolled in any courses yet.</p>
+                    <button onclick="showTab('browse-courses')" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
+                        Browse Courses
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Browse Courses Tab -->
+        <div id="content-browse-courses" class="tab-content hidden">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold mb-4">Available Courses</h2>
+                <div class="mb-4">
+                    <select id="category-filter" onchange="loadAllCourses()" 
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        <option value="">All Categories</option>
+                        <option value="sign_language">Sign Language</option>
+                        <option value="braille">Braille Literacy</option>
+                        <option value="autism_therapy">Autism Therapy</option>
+                        <option value="ecd">Early Childhood Development</option>
+                        <option value="inclusive_education">Inclusive Education</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div id="all-courses" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+    <script>
+        let currentUser = null
+
+        async function checkAuth() {
+            try {
+                const response = await axios.get('/api/auth/me')
+                currentUser = response.data.user
+                document.getElementById('user-name').textContent = currentUser.full_name
+                if (currentUser.role !== 'student') {
+                    window.location.href = '/' + currentUser.role + '/dashboard'
+                }
+            } catch (error) {
+                window.location.href = '/login'
+            }
+        }
+
+        async function logout() {
+            await axios.post('/api/auth/logout')
+            window.location.href = '/login'
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'))
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('border-purple-600', 'text-purple-600')
+                el.classList.add('border-transparent', 'text-gray-500')
+            })
+            
+            document.getElementById('content-' + tabName).classList.remove('hidden')
+            document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500')
+            document.getElementById('tab-' + tabName).classList.add('border-purple-600', 'text-purple-600')
+
+            if (tabName === 'browse-courses') {
+                loadAllCourses()
+            }
+        }
+
+        async function loadEnrollments() {
+            try {
+                const response = await axios.get('/api/enrollments')
+                const enrollments = response.data.enrollments
+
+                if (enrollments.length === 0) {
+                    document.getElementById('no-enrollments').classList.remove('hidden')
+                    document.getElementById('enrolled-courses').classList.add('hidden')
+                } else {
+                    document.getElementById('no-enrollments').classList.add('hidden')
+                    document.getElementById('enrolled-courses').classList.remove('hidden')
+                    
+                    const html = enrollments.map(e => `
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            <div class="h-48 bg-gradient-to-r from-purple-400 to-indigo-500"></div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-2">${e.course_title}</h3>
+                                <p class="text-gray-600 mb-4">${getCategoryName(e.category)}</p>
+                                <div class="mb-4">
+                                    <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                        <span>Progress</span>
+                                        <span>${e.progress}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-purple-600 h-2 rounded-full" style="width: ${e.progress}%"></div>
+                                    </div>
+                                </div>
+                                <a href="/student/course/${e.course_id}" 
+                                   class="block w-full text-center bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+                                    Continue Learning
+                                </a>
+                            </div>
+                        </div>
+                    `).join('')
+                    
+                    document.getElementById('enrolled-courses').innerHTML = html
+                }
+            } catch (error) {
+                console.error('Failed to load enrollments', error)
+            }
+        }
+
+        async function loadAllCourses() {
+            try {
+                const category = document.getElementById('category-filter').value
+                const url = category ? `/api/courses?category=${category}` : '/api/courses'
+                const response = await axios.get(url)
+                const courses = response.data.courses
+
+                const html = courses.map(course => `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="h-48 bg-gradient-to-r from-blue-400 to-teal-500"></div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2">${course.title}</h3>
+                            <p class="text-gray-600 text-sm mb-3">${course.description || ''}</p>
+                            <div class="text-sm text-gray-500 mb-2">
+                                <i class="fas fa-user mr-1"></i>${course.instructor_name || 'TBA'}
+                            </div>
+                            <div class="text-sm text-gray-500 mb-4">
+                                <i class="fas fa-clock mr-1"></i>${course.duration_weeks} weeks
+                            </div>
+                            <button onclick="enrollCourse(${course.id})" 
+                                    class="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+                                Enroll Now
+                            </button>
+                        </div>
+                    </div>
+                `).join('')
+                
+                document.getElementById('all-courses').innerHTML = html
+            } catch (error) {
+                console.error('Failed to load courses', error)
+            }
+        }
+
+        async function enrollCourse(courseId) {
+            try {
+                await axios.post('/api/enrollments', { course_id: courseId })
+                alert('Successfully enrolled in course!')
+                showTab('my-courses')
+                loadEnrollments()
+            } catch (error) {
+                alert(error.response?.data?.error || 'Failed to enroll')
+            }
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                sign_language: 'Sign Language',
+                braille: 'Braille Literacy',
+                autism_therapy: 'Autism Therapy',
+                ecd: 'Early Childhood Development',
+                inclusive_education: 'Inclusive Education',
+                other: 'Other'
+            }
+            return names[category] || category
+        }
+
+        // Initialize
+        checkAuth().then(() => {
+            loadEnrollments()
+        })
+    </script>
+</body>
+</html>
