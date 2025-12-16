@@ -1,19 +1,19 @@
 -- Insert default admin user (password: admin123)
+-- Password is hashed with SHA-256 + salt 'dicd_salt_2024'
 INSERT OR IGNORE INTO users (email, password, full_name, role, phone, address) VALUES 
-  ('admin@dicd.edu.mw', '$2a$10$rMqKJ5YvXvXqXqXqXqXqXeK5YvXvXqXqXqXqXqXqXqXqXqXqXqXqX', 'Moses L. Khembo', 'admin', '+265 991 507 626', 'Private Bag 151, Rumphi, Mzuzu - Malawi');
+  ('admin@dicd.edu.mw', '0557bd0cfe7803ab1827e261bf4ded1a078eb31e9cc804d27d8f94b3a92842d8', 'Moses L. Khembo', 'admin', '+265 991 507 626', 'Private Bag 151, Rumphi, Mzuzu - Malawi');
 
--- Note: In production, passwords should be properly hashed with bcrypt
--- For demo purposes, password is 'admin123'
+-- Note: All passwords are 'admin123' for demo purposes
 
 -- Insert sample instructors
 INSERT OR IGNORE INTO users (email, password, full_name, role, phone) VALUES 
-  ('instructor1@dicd.edu.mw', '$2a$10$rMqKJ5YvXvXqXqXqXqXqXeK5YvXvXqXqXqXqXqXqXqXqXqXqXqXqX', 'Grace Banda', 'instructor', '+265 888 111 222'),
-  ('instructor2@dicd.edu.mw', '$2a$10$rMqKJ5YvXvXqXqXqXqXqXeK5YvXvXqXqXqXqXqXqXqXqXqXqXqXqX', 'John Phiri', 'instructor', '+265 888 333 444');
+  ('instructor1@dicd.edu.mw', '0557bd0cfe7803ab1827e261bf4ded1a078eb31e9cc804d27d8f94b3a92842d8', 'Grace Banda', 'instructor', '+265 888 111 222'),
+  ('instructor2@dicd.edu.mw', '0557bd0cfe7803ab1827e261bf4ded1a078eb31e9cc804d27d8f94b3a92842d8', 'John Phiri', 'instructor', '+265 888 333 444');
 
 -- Insert sample students
 INSERT OR IGNORE INTO users (email, password, full_name, role) VALUES 
-  ('student1@example.com', '$2a$10$rMqKJ5YvXvXqXqXqXqXqXeK5YvXvXqXqXqXqXqXqXqXqXqXqXqXqX', 'Chisomo Mwale', 'student'),
-  ('student2@example.com', '$2a$10$rMqKJ5YvXvXqXqXqXqXqXeK5YvXvXqXqXqXqXqXqXqXqXqXqXqXqX', 'Takondwa Kamanga', 'student');
+  ('student1@example.com', '0557bd0cfe7803ab1827e261bf4ded1a078eb31e9cc804d27d8f94b3a92842d8', 'Chisomo Mwale', 'student'),
+  ('student2@example.com', '0557bd0cfe7803ab1827e261bf4ded1a078eb31e9cc804d27d8f94b3a92842d8', 'Takondwa Kamanga', 'student');
 
 -- Insert sample courses
 INSERT OR IGNORE INTO courses (title, description, category, instructor_id, duration_weeks, status, image_url) VALUES 
