@@ -520,6 +520,7 @@ app.get('/', (c) => {
                     <div class="flex items-center space-x-4">
                         <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
                         <a href="/courses" class="text-gray-700 hover:text-purple-600">Courses</a>
+                        <a href="/services" class="text-gray-700 hover:text-purple-600">Services</a>
                         <a href="/about" class="text-gray-700 hover:text-purple-600">About</a>
                         <a href="/contact" class="text-gray-700 hover:text-purple-600">Contact</a>
                         <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Login</a>
@@ -528,21 +529,41 @@ app.get('/', (c) => {
             </div>
         </nav>
 
-        <!-- Hero Section -->
-        <div class="hero-gradient text-white py-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h1 class="text-5xl font-bold mb-6">Empowering Abilities. Transforming Lives.</h1>
-                <p class="text-xl mb-8 max-w-3xl mx-auto">
-                    DICD Inclusive College provides inclusive education, vocational training, and psychosocial support
-                    for persons with disabilities and vulnerable groups across Malawi.
-                </p>
-                <div class="space-x-4">
-                    <a href="/courses" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block">
-                        Browse Courses
-                    </a>
-                    <a href="/register" class="bg-purple-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-900 inline-block">
-                        Get Started
-                    </a>
+        <!-- Hero Section with Video Background -->
+        <div class="relative h-screen min-h-[600px] overflow-hidden">
+            <!-- Background Video -->
+            <video 
+                autoplay 
+                loop 
+                muted 
+                playsinline
+                class="absolute inset-0 w-full h-full object-cover"
+            >
+                <source src="/static/videos/bg1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            
+            <!-- Overlay for better text readability -->
+            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+            
+            <!-- Content on top of video -->
+            <div class="relative z-10 h-full flex items-center justify-center">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                    <h1 class="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+                        Empowering Abilities. Transforming Lives.
+                    </h1>
+                    <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto drop-shadow-lg">
+                        DICD Inclusive College provides inclusive education, vocational training, and psychosocial support
+                        for persons with disabilities and vulnerable groups across Malawi.
+                    </p>
+                    <div class="space-x-4">
+                        <a href="/courses" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block shadow-lg transform hover:scale-105 transition-transform">
+                            Browse Courses
+                        </a>
+                        <a href="/register" class="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 inline-block shadow-lg transform hover:scale-105 transition-transform">
+                            Get Started
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -935,6 +956,7 @@ app.get('/courses', (c) => {
                 <div class="flex items-center space-x-4">
                     <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
                     <a href="/courses" class="text-purple-600 font-semibold">Courses</a>
+                    <a href="/services" class="text-gray-700 hover:text-purple-600">Services</a>
                     <a href="/about" class="text-gray-700 hover:text-purple-600">About</a>
                     <a href="/contact" class="text-gray-700 hover:text-purple-600">Contact</a>
                     <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Login</a>
@@ -1030,6 +1052,7 @@ app.get('/about', (c) => {
                 <div class="flex items-center space-x-4">
                     <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
                     <a href="/courses" class="text-gray-700 hover:text-purple-600">Courses</a>
+                    <a href="/services" class="text-gray-700 hover:text-purple-600">Services</a>
                     <a href="/about" class="text-purple-600 font-semibold">About</a>
                     <a href="/contact" class="text-gray-700 hover:text-purple-600">Contact</a>
                     <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Login</a>
@@ -1148,6 +1171,7 @@ app.get('/contact', (c) => {
                 <div class="flex items-center space-x-4">
                     <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
                     <a href="/courses" class="text-gray-700 hover:text-purple-600">Courses</a>
+                    <a href="/services" class="text-gray-700 hover:text-purple-600">Services</a>
                     <a href="/about" class="text-gray-700 hover:text-purple-600">About</a>
                     <a href="/contact" class="text-purple-600 font-semibold">Contact</a>
                     <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Login</a>
@@ -1279,6 +1303,303 @@ app.get('/contact', (c) => {
             }
         })
     </script>
+</body>
+</html>
+  `)
+})
+
+
+// Services Page
+app.get('/services', (c) => {
+  return c.html(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services - DICD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
+                    <a href="/courses" class="text-gray-700 hover:text-purple-600">Courses</a>
+                    <a href="/services" class="text-purple-600 font-semibold">Services</a>
+                    <a href="/about" class="text-gray-700 hover:text-purple-600">About</a>
+                    <a href="/contact" class="text-gray-700 hover:text-purple-600">Contact</a>
+                    <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-4xl font-bold mb-4 text-center">Our Services</h1>
+        <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">
+            DICD provides comprehensive vocational training and support services for persons with disabilities,
+            empowering them with practical skills and opportunities for self-reliance.
+        </p>
+
+        <!-- Vocational Training Section -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-purple-600">
+                <i class="fas fa-tools mr-3"></i>Vocational Training Programs
+            </h2>
+            <p class="text-gray-700 mb-8">
+                We train people with different abilities in various practical skills, preparing them for employment
+                and entrepreneurship opportunities.
+            </p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Carpentry and Joinery -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-hammer"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Carpentry & Joinery</h3>
+                    <p class="text-gray-600">
+                        Learn woodworking skills including furniture making, door and window construction,
+                        and general carpentry techniques.
+                    </p>
+                </div>
+
+                <!-- Tailoring -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Tailoring</h3>
+                    <p class="text-gray-600">
+                        Master garment design, cutting, sewing, and fashion creation. Learn to operate
+                        industrial and domestic sewing machines.
+                    </p>
+                </div>
+
+                <!-- Welding and Fabrication -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Welding & Fabrication</h3>
+                    <p class="text-gray-600">
+                        Gain expertise in metal working, welding techniques, and fabrication of metal
+                        structures and products.
+                    </p>
+                </div>
+
+                <!-- Brick Laying -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Brick Laying</h3>
+                    <p class="text-gray-600">
+                        Learn construction skills including bricklaying, plastering, and basic building
+                        techniques for residential and commercial structures.
+                    </p>
+                </div>
+
+                <!-- Electrical Installation -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Electrical Installation</h3>
+                    <p class="text-gray-600">
+                        Study electrical wiring, circuit installation, maintenance, and safety procedures
+                        for residential and industrial applications.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Services Section -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-purple-600">
+                <i class="fas fa-hands-helping mr-3"></i>Support & Therapeutic Services
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Physiotherapy -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Physiotherapy Services</h3>
+                    <p class="text-gray-600">
+                        Professional physiotherapy treatment and rehabilitation services for persons
+                        with physical disabilities and mobility challenges.
+                    </p>
+                </div>
+
+                <!-- Braille Training -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-braille"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Braille Training</h3>
+                    <p class="text-gray-600">
+                        Comprehensive training in Braille reading and writing for visually impaired
+                        individuals and support staff.
+                    </p>
+                </div>
+
+                <!-- Sign Language Training -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-sign-language"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Sign Language Training</h3>
+                    <p class="text-gray-600">
+                        Learn sign language communication for the deaf community, including expressive
+                        and receptive signing skills.
+                    </p>
+                </div>
+
+                <!-- Inclusive Education -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-universal-access"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Inclusive Education Training</h3>
+                    <p class="text-gray-600">
+                        Training educators and institutions on inclusive teaching practices and
+                        accommodations for learners with disabilities.
+                    </p>
+                </div>
+
+                <!-- Counseling Services -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Counseling Services</h3>
+                    <p class="text-gray-600">
+                        Professional counseling and psychosocial support for individuals and families
+                        dealing with disability-related challenges.
+                    </p>
+                </div>
+
+                <!-- Disability Awareness -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Disability Awareness</h3>
+                    <p class="text-gray-600">
+                        Conducting awareness campaigns and training in different sectors about disability
+                        inclusion and rights.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artisan & Craft Services Section -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-purple-600">
+                <i class="fas fa-paint-brush mr-3"></i>Artisan & Craft Services
+            </h2>
+            <p class="text-gray-700 mb-8">
+                We provide training and production services in various artistic and craft activities,
+                creating income-generating opportunities.
+            </p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Bracelet Making -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Bracelet Making</h3>
+                    <p class="text-gray-600">
+                        Learn to create beautiful handcrafted bracelets using various materials and
+                        techniques for commercial purposes.
+                    </p>
+                </div>
+
+                <!-- Crochet -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Crochet</h3>
+                    <p class="text-gray-600">
+                        Master crochet techniques to create clothing items, accessories, and decorative
+                        pieces for personal use or sale.
+                    </p>
+                </div>
+
+                <!-- Knitting -->
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="text-purple-600 text-5xl mb-4">
+                        <i class="fas fa-mitten"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Knitting</h3>
+                    <p class="text-gray-600">
+                        Learn professional knitting skills for producing sweaters, scarves, blankets,
+                        and other knitted products.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg shadow-xl p-12 text-center">
+            <h2 class="text-3xl font-bold mb-4">Interested in Our Services?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">
+                Whether you want to enroll in a training program or learn more about our support services,
+                we're here to help you achieve your goals.
+            </p>
+            <div class="space-x-4">
+                <a href="/register" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block">
+                    Register Now
+                </a>
+                <a href="/contact" class="bg-purple-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-900 inline-block">
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                    <p><i class="fas fa-user mr-2"></i>Moses L. Khembo</p>
+                    <p><i class="fas fa-phone mr-2"></i>+265 991 507 626</p>
+                    <p><i class="fas fa-phone mr-2"></i>+265 880 271 451</p>
+                    <p><i class="fas fa-envelope mr-2"></i>moseskhembo27@gmail.com</p>
+                    <p><i class="fas fa-map-marker-alt mr-2"></i>Private Bag 151, Rumphi, Mzuzu - Malawi</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="hover:text-purple-400">Home</a></li>
+                        <li><a href="/courses" class="hover:text-purple-400">Courses</a></li>
+                        <li><a href="/services" class="hover:text-purple-400">Services</a></li>
+                        <li><a href="/about" class="hover:text-purple-400">About Us</a></li>
+                        <li><a href="/contact" class="hover:text-purple-400">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Our Motto</h3>
+                    <p class="italic">"Disability is not inability – let's focus on ability not disability."</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p>&copy; 2024 DICD Inclusive College. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
   `)
