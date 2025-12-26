@@ -81,3 +81,46 @@ INSERT OR IGNORE INTO lessons (course_id, title, content, order_index, duration_
   (3, 'Understanding Autism Spectrum', 'Overview of autism spectrum disorder, characteristics, and common challenges.', 1, 40),
   (3, 'Early Detection Methods', 'Identifying early signs of autism in children and importance of early intervention.', 2, 35),
   (3, 'Communication Strategies', 'Effective communication techniques and tools for children with autism.', 3, 45);
+
+-- Insert sample announcements
+INSERT OR IGNORE INTO announcements (title, content, type, status, created_by, published_at) VALUES 
+  (
+    'Call for Applications - Sign Language Training Scholarship 2024',
+    'DICD Inclusive College is pleased to announce scholarships for our Sign Language Training program. We are offering 10 full scholarships to deaf students from underprivileged backgrounds. The program starts in January 2024 and runs for 12 weeks. Successful applicants will receive free tuition, learning materials, and certification upon completion.',
+    'call_for_application',
+    'published',
+    1,
+    CURRENT_TIMESTAMP
+  ),
+  (
+    'New Braille Literacy Training Centre Opening in Lilongwe',
+    'We are excited to announce the opening of our new training centre in Lilongwe! This facility will provide state-of-the-art Braille literacy training and will be fully accessible for persons with visual impairments. Opening ceremony scheduled for February 2024.',
+    'news',
+    'published',
+    1,
+    CURRENT_TIMESTAMP
+  );
+
+-- Insert sample application form for the scholarship
+INSERT OR IGNORE INTO application_forms (announcement_id, title, description, fields_json, status, deadline, max_applications, created_by) VALUES 
+  (
+    1,
+    'Sign Language Training Scholarship Application Form',
+    'Please fill out this form to apply for the Sign Language Training Scholarship. Ensure all information is accurate and complete.',
+    '[
+      {"id":"full_name","type":"text","label":"Full Name","required":true,"placeholder":"Enter your full name"},
+      {"id":"email","type":"email","label":"Email Address","required":true,"placeholder":"your.email@example.com"},
+      {"id":"phone","type":"tel","label":"Phone Number","required":true,"placeholder":"+265 999 000 000"},
+      {"id":"date_of_birth","type":"date","label":"Date of Birth","required":true},
+      {"id":"gender","type":"select","label":"Gender","required":true,"options":["Male","Female","Other"]},
+      {"id":"disability_type","type":"select","label":"Type of Disability","required":true,"options":["Deaf","Hard of Hearing","Other"]},
+      {"id":"education_level","type":"select","label":"Highest Education Level","required":true,"options":["Primary","Secondary","Tertiary","None"]},
+      {"id":"reason","type":"textarea","label":"Why do you want to learn sign language?","required":true,"placeholder":"Tell us about your motivation..."},
+      {"id":"financial_situation","type":"textarea","label":"Describe your financial situation","required":true,"placeholder":"Explain why you need this scholarship..."},
+      {"id":"documents","type":"file","label":"Supporting Documents","required":true,"accept":".pdf,.jpg,.png","multiple":true,"help":"Upload ID, disability certificate, and proof of income (if any)"}
+    ]',
+    'active',
+    '2024-01-31 23:59:59',
+    10,
+    1
+  );

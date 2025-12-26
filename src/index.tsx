@@ -659,17 +659,31 @@ app.get('/', (c) => {
             </div>
         </div>
 
-        <!-- CTA Section -->
-        <div class="hero-gradient text-white py-16">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-bold mb-4">Join Us in Making a Difference</h2>
+        <!-- CTA Section with Video Background -->
+        <div class="relative py-24 overflow-hidden">
+            <!-- Video Background -->
+            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+                <source src="/static/videos/bg.mp4" type="video/mp4">
+            </video>
+            
+            <!-- Dark Overlay -->
+            <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+            
+            <!-- Content -->
+            <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                <h2 class="text-4xl font-bold mb-4">Join Us in Making a Difference</h2>
                 <p class="text-xl mb-8">
                     Whether by sponsoring a child, enrolling in a training course, or funding our programs—you can
                     be the reason someone is empowered today.
                 </p>
-                <a href="/contact" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block">
-                    Get In Touch
-                </a>
+                <div class="space-x-4">
+                    <a href="/contact" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block transform hover:scale-105 transition">
+                        Get In Touch
+                    </a>
+                    <a href="/donate" class="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 inline-block transform hover:scale-105 transition">
+                        <i class="fas fa-heart mr-2"></i>Donate Now
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -1600,6 +1614,659 @@ app.get('/services', (c) => {
             </div>
         </div>
     </footer>
+</body>
+</html>
+  `)
+})
+
+
+// ============================================
+// API ROUTES - DONATIONS
+// ============================================
+
+// Create donation intent
+app.post('/api/donations/create', async (c) => {
+  try {
+    const { donor_name, donor_email, donor_phone, amount, message, is_anonymous } = await c.req.json()
+    
+    // For demo purposes, we'll simulate successful payment
+    // In production, integrate with Stripe API
+    const result = await c.env.DB.prepare(
+      'INSERT INTO donations (donor_name, donor_email, donor_phone, amount, message, is_anonymous, status, stripe_payment_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(
+      is_anonymous ? 'Anonymous' : donor_name,
+      donor_email,
+      donor_phone || null,
+      amount,
+      message || null,
+      is_anonymous ? 1 : 0,
+      'completed',
+      'demo_' + Date.now()
+    ).run()
+
+    return c.json({ 
+      success: true, 
+      donationId: result.meta.last_row_id,
+      message: 'Thank you for your generous donation!'
+    })
+  } catch (error) {
+    return c.json({ error: 'Failed to process donation' }, 500)
+  }
+})
+
+// Get all donations (admin only)
+app.get('/api/admin/donations', async (c) => {
+  try {
+    const user = await verifySession(c)
+    if (!user || user.role !== 'admin') {
+      return c.json({ error: 'Unauthorized' }, 403)
+    }
+
+    const { results } = await c.env.DB.prepare(
+      'SELECT * FROM donations ORDER BY created_at DESC'
+    ).all()
+
+    return c.json({ donations: results })
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch donations' }, 500)
+  }
+})
+
+// Get donation statistics
+app.get('/api/admin/donation-stats', async (c) => {
+  try {
+    const user = await verifySession(c)
+    if (!user || user.role !== 'admin') {
+      return c.json({ error: 'Unauthorized' }, 403)
+    }
+
+    const total = await c.env.DB.prepare(
+      "SELECT COUNT(*) as count, SUM(amount) as total FROM donations WHERE status = 'completed'"
+    ).first()
+
+    return c.json({
+      totalDonations: total.count,
+      totalAmount: total.total || 0
+    })
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch stats' }, 500)
+  }
+})
+
+// ============================================
+// API ROUTES - ANNOUNCEMENTS
+// ============================================
+
+// Get all published announcements
+app.get('/api/announcements', async (c) => {
+  try {
+    const type = c.req.query('type')
+    
+    let query = "SELECT a.*, u.full_name as author_name FROM announcements a LEFT JOIN users u ON a.created_by = u.id WHERE a.status = 'published'"
+    const params = []
+
+    if (type) {
+      query += ' AND a.type = ?'
+      params.push(type)
+    }
+
+    query += ' ORDER BY a.published_at DESC'
+
+    const { results } = await c.env.DB.prepare(query).bind(...params).all()
+    return c.json({ announcements: results })
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch announcements' }, 500)
+  }
+})
+
+// Get single announcement
+app.get('/api/announcements/:id', async (c) => {
+  try {
+    const announcementId = c.req.param('id')
+
+    const announcement = await c.env.DB.prepare(
+      'SELECT a.*, u.full_name as author_name FROM announcements a LEFT JOIN users u ON a.created_by = u.id WHERE a.id = ?'
+    ).bind(announcementId).first()
+
+    if (!announcement) {
+      return c.json({ error: 'Announcement not found' }, 404)
+    }
+
+    return c.json({ announcement })
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch announcement' }, 500)
+  }
+})
+
+// Create announcement (admin only)
+app.post('/api/announcements', async (c) => {
+  try {
+    const user = await verifySession(c)
+    if (!user || user.role !== 'admin') {
+      return c.json({ error: 'Unauthorized' }, 403)
+    }
+
+    const { title, content, type, status, expires_at } = await c.req.json()
+
+    const published_at = status === 'published' ? new Date().toISOString() : null
+
+    const result = await c.env.DB.prepare(
+      'INSERT INTO announcements (title, content, type, status, published_at, expires_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(title, content, type, status, published_at, expires_at || null, user.id).run()
+
+    return c.json({ success: true, announcementId: result.meta.last_row_id })
+  } catch (error) {
+    return c.json({ error: 'Failed to create announcement' }, 500)
+  }
+})
+
+// Update announcement (admin only)
+app.put('/api/announcements/:id', async (c) => {
+  try {
+    const user = await verifySession(c)
+    if (!user || user.role !== 'admin') {
+      return c.json({ error: 'Unauthorized' }, 403)
+    }
+
+    const announcementId = c.req.param('id')
+    const { title, content, type, status, expires_at } = await c.req.json()
+
+    await c.env.DB.prepare(
+      'UPDATE announcements SET title = ?, content = ?, type = ?, status = ?, expires_at = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+    ).bind(title, content, type, status, expires_at || null, announcementId).run()
+
+    return c.json({ success: true })
+  } catch (error) {
+    return c.json({ error: 'Failed to update announcement' }, 500)
+  }
+})
+
+// Delete announcement (admin only)
+app.delete('/api/announcements/:id', async (c) => {
+  try {
+    const user = await verifySession(c)
+    if (!user || user.role !== 'admin') {
+      return c.json({ error: 'Unauthorized' }, 403)
+    }
+
+    const announcementId = c.req.param('id')
+    await c.env.DB.prepare('DELETE FROM announcements WHERE id = ?').bind(announcementId).run()
+
+    return c.json({ success: true })
+  } catch (error) {
+    return c.json({ error: 'Failed to delete announcement' }, 500)
+  }
+})
+
+// ============================================
+// API ROUTES - APPLICATION FORMS
+// ============================================
+
+// Get all application forms
+app.get('/api/forms', async (c) => {
+  try {
+    const { results } = await c.env.DB.prepare(
+      "SELECT f.*, a.title as announcement_title FROM application_forms f LEFT JOIN announcements a ON f.announcement_id = a.id WHERE f.status = 'active' ORDER BY f.created_at DESC"
+    ).all()
+
+    return c.json({ forms: results })
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch forms' }, 500)
+  }
+})
+
+// Get form by ID
+app.get('/api/forms/:id', async (c) => {
+  try {
+    const formId = c.req.param('id')
+
+    const form = await c.env.DB.prepare(
+      'SELECT f.*, a.title as announcement_title FROM application_forms f LEFT JOIN announcements a ON f.announcement_id = a.id WHERE f.id = ?'
+    ).bind(formId).first()
+
+    if (!form) {
+      return c.json({ error: 'Form not found' }, 404)
+    }
+
+    return c.json({ form })
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch form' }, 500)
+  }
+})
+
+// Create application form (admin only)
+app.post('/api/forms', async (c) => {
+  try {
+    const user = await verifySession(c)
+    if (!user || user.role !== 'admin') {
+      return c.json({ error: 'Unauthorized' }, 403)
+    }
+
+    const { announcement_id, title, description, fields, deadline, max_applications } = await c.req.json()
+
+    const result = await c.env.DB.prepare(
+      'INSERT INTO application_forms (announcement_id, title, description, fields_json, deadline, max_applications, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(announcement_id || null, title, description, JSON.stringify(fields), deadline, max_applications || null, user.id).run()
+
+    return c.json({ success: true, formId: result.meta.last_row_id })
+  } catch (error) {
+    return c.json({ error: 'Failed to create form' }, 500)
+  }
+})
+
+// Submit application
+app.post('/api/applications', async (c) => {
+  try {
+    const { form_id, applicant_name, applicant_email, applicant_phone, form_data, document_urls } = await c.req.json()
+
+    const user = await verifySession(c)
+    const userId = user ? user.id : null
+
+    const result = await c.env.DB.prepare(
+      'INSERT INTO applications (form_id, user_id, applicant_name, applicant_email, applicant_phone, form_data_json, document_urls) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(
+      form_id,
+      userId,
+      applicant_name,
+      applicant_email,
+      applicant_phone || null,
+      JSON.stringify(form_data),
+      document_urls ? JSON.stringify(document_urls) : null
+    ).run()
+
+    return c.json({ success: true, applicationId: result.meta.last_row_id })
+  } catch (error) {
+    return c.json({ error: 'Failed to submit application' }, 500)
+  }
+})
+
+// Get all applications (admin only)
+app.get('/api/admin/applications', async (c) => {
+  try {
+    const user = await verifySession(c)
+    if (!user || user.role !== 'admin') {
+      return c.json({ error: 'Unauthorized' }, 403)
+    }
+
+    const formId = c.req.query('form_id')
+    
+    let query = 'SELECT a.*, f.title as form_title FROM applications a JOIN application_forms f ON a.form_id = f.id'
+    const params = []
+
+    if (formId) {
+      query += ' WHERE a.form_id = ?'
+      params.push(formId)
+    }
+
+    query += ' ORDER BY a.created_at DESC'
+
+    const { results } = await c.env.DB.prepare(query).bind(...params).all()
+
+    return c.json({ applications: results })
+  } catch (error) {
+    return c.json({ error: 'Failed to fetch applications' }, 500)
+  }
+})
+
+// Update application status (admin only)
+app.put('/api/admin/applications/:id', async (c) => {
+  try {
+    const user = await verifySession(c)
+    if (!user || user.role !== 'admin') {
+      return c.json({ error: 'Unauthorized' }, 403)
+    }
+
+    const applicationId = c.req.param('id')
+    const { status, notes } = await c.req.json()
+
+    await c.env.DB.prepare(
+      'UPDATE applications SET status = ?, notes = ?, reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?'
+    ).bind(status, notes || null, user.id, applicationId).run()
+
+    return c.json({ success: true })
+  } catch (error) {
+    return c.json({ error: 'Failed to update application' }, 500)
+  }
+})
+
+
+// Donate Page
+app.get('/donate', (c) => {
+  return c.redirect('/static/donate.html')
+})
+
+// Announcements Page
+app.get('/announcements', (c) => {
+  return c.html(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - DICD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
+                    <a href="/courses" class="text-gray-700 hover:text-purple-600">Courses</a>
+                    <a href="/announcements" class="text-purple-600 font-semibold">Announcements</a>
+                    <a href="/about" class="text-gray-700 hover:text-purple-600">About</a>
+                    <a href="/contact" class="text-gray-700 hover:text-purple-600">Contact</a>
+                    <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-4xl font-bold mb-8">Latest Announcements</h1>
+
+        <div class="mb-6">
+            <select id="type-filter" onchange="loadAnnouncements()" class="px-4 py-2 border border-gray-300 rounded-lg">
+                <option value="">All Types</option>
+                <option value="call_for_application">Applications</option>
+                <option value="news">News</option>
+                <option value="event">Events</option>
+                <option value="general">General</option>
+            </select>
+        </div>
+
+        <div id="announcements-list" class="space-y-6"></div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 DICD Inclusive College. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+    <script>
+        async function loadAnnouncements() {
+            try {
+                const type = document.getElementById('type-filter').value
+                const url = type ? \`/api/announcements?type=\${type}\` : '/api/announcements'
+                const response = await axios.get(url)
+                const announcements = response.data.announcements
+
+                const html = announcements.map(ann => \`
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="px-3 py-1 text-sm rounded-full \${getTypeBadge(ann.type)}">\${formatType(ann.type)}</span>
+                            <span class="text-sm text-gray-500">\${new Date(ann.published_at).toLocaleDateString()}</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">\${ann.title}</h3>
+                        <p class="text-gray-700 mb-4">\${ann.content}</p>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <i class="fas fa-user mr-2"></i>
+                            <span>Posted by \${ann.author_name || 'DICD Admin'}</span>
+                        </div>
+                        \${ann.type === 'call_for_application' ? \`
+                            <div class="mt-4">
+                                <a href="/applications?announcement=\${ann.id}" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 inline-block">
+                                    <i class="fas fa-file-alt mr-2"></i>Apply Now
+                                </a>
+                            </div>
+                        \` : ''}
+                    </div>
+                \`).join('')
+
+                document.getElementById('announcements-list').innerHTML = html || '<p class="text-center text-gray-500">No announcements available</p>'
+            } catch (error) {
+                console.error('Failed to load announcements', error)
+            }
+        }
+
+        function getTypeBadge(type) {
+            const badges = {
+                call_for_application: 'bg-green-100 text-green-800',
+                news: 'bg-blue-100 text-blue-800',
+                event: 'bg-orange-100 text-orange-800',
+                general: 'bg-gray-100 text-gray-800'
+            }
+            return badges[type] || badges.general
+        }
+
+        function formatType(type) {
+            return type.replace(/_/g, ' ').replace(/\\b\\w/g, l => l.toUpperCase())
+        }
+
+        loadAnnouncements()
+    </script>
+</body>
+</html>
+  `)
+})
+
+// Application Forms Page
+app.get('/applications', (c) => {
+  return c.html(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Forms - DICD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
+                    <a href="/announcements" class="text-gray-700 hover:text-purple-600">Announcements</a>
+                    <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-4xl font-bold mb-8">Application Forms</h1>
+
+        <div id="forms-list" class="space-y-6"></div>
+        
+        <!-- Application Form Modal -->
+        <div id="form-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="form-title" class="text-2xl font-bold"></h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <p id="form-description" class="text-gray-600 mb-6"></p>
+                
+                <div id="success-message" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"></div>
+                <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
+                
+                <form id="application-form" class="space-y-4"></form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 DICD Inclusive College. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+    <script>
+        let currentForm = null
+
+        async function loadForms() {
+            try {
+                const response = await axios.get('/api/forms')
+                const forms = response.data.forms
+
+                const html = forms.map(form => \`
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-2">\${form.title}</h3>
+                        <p class="text-gray-600 mb-4">\${form.description || ''}</p>
+                        <div class="flex justify-between items-center text-sm text-gray-600 mb-4">
+                            <span><i class="fas fa-calendar mr-2"></i>Deadline: \${new Date(form.deadline).toLocaleDateString()}</span>
+                            \${form.max_applications ? \`<span><i class="fas fa-users mr-2"></i>Max: \${form.max_applications} applicants</span>\` : ''}
+                        </div>
+                        <button onclick="openForm(\${form.id})" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
+                            <i class="fas fa-file-alt mr-2"></i>Apply Now
+                        </button>
+                    </div>
+                \`).join('')
+
+                document.getElementById('forms-list').innerHTML = html || '<p class="text-center text-gray-500">No application forms available</p>'
+            } catch (error) {
+                console.error('Failed to load forms', error)
+            }
+        }
+
+        async function openForm(formId) {
+            try {
+                const response = await axios.get(\`/api/forms/\${formId}\`)
+                currentForm = response.data.form
+                
+                document.getElementById('form-title').textContent = currentForm.title
+                document.getElementById('form-description').textContent = currentForm.description || ''
+                
+                const fields = JSON.parse(currentForm.fields_json)
+                const formHtml = fields.map(field => renderField(field)).join('') + \`
+                    <button type="submit" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 font-semibold mt-4">
+                        <span id="btn-text">Submit Application</span>
+                        <span id="btn-loading" class="hidden"><i class="fas fa-spinner fa-spin"></i> Submitting...</span>
+                    </button>
+                \`
+                
+                document.getElementById('application-form').innerHTML = formHtml
+                document.getElementById('form-modal').classList.remove('hidden')
+                
+                document.getElementById('application-form').onsubmit = submitApplication
+            } catch (error) {
+                alert('Failed to load form')
+            }
+        }
+
+        function renderField(field) {
+            const required = field.required ? 'required' : ''
+            const label = field.label + (field.required ? ' *' : '')
+            
+            switch(field.type) {
+                case 'text':
+                case 'email':
+                case 'tel':
+                case 'date':
+                    return \`
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">\${label}</label>
+                            <input id="\${field.id}" type="\${field.type}" \${required} placeholder="\${field.placeholder || ''}"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                    \`
+                case 'textarea':
+                    return \`
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">\${label}</label>
+                            <textarea id="\${field.id}" rows="4" \${required} placeholder="\${field.placeholder || ''}"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"></textarea>
+                        </div>
+                    \`
+                case 'select':
+                    return \`
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">\${label}</label>
+                            <select id="\${field.id}" \${required} class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Select...</option>
+                                \${field.options.map(opt => \`<option value="\${opt}">\${opt}</option>\`).join('')}
+                            </select>
+                        </div>
+                    \`
+                case 'file':
+                    return \`
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">\${label}</label>
+                            \${field.help ? \`<p class="text-sm text-gray-500 mb-2">\${field.help}</p>\` : ''}
+                            <input id="\${field.id}" type="file" \${required} accept="\${field.accept || '*'}" \${field.multiple ? 'multiple' : ''}
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none">
+                            <p class="text-xs text-gray-500 mt-1">Note: File upload is simulated in demo mode</p>
+                        </div>
+                    \`
+                default:
+                    return ''
+            }
+        }
+
+        async function submitApplication(e) {
+            e.preventDefault()
+            
+            const btnText = document.getElementById('btn-text')
+            const btnLoading = document.getElementById('btn-loading')
+            const errorMsg = document.getElementById('error-message')
+            const successMsg = document.getElementById('success-message')
+            
+            btnText.classList.add('hidden')
+            btnLoading.classList.remove('hidden')
+            errorMsg.classList.add('hidden')
+            successMsg.classList.add('hidden')
+
+            try {
+                const fields = JSON.parse(currentForm.fields_json)
+                const formData = {}
+                
+                fields.forEach(field => {
+                    const element = document.getElementById(field.id)
+                    if (element) {
+                        formData[field.id] = element.value
+                    }
+                })
+
+                const response = await axios.post('/api/applications', {
+                    form_id: currentForm.id,
+                    applicant_name: formData.full_name || formData.name,
+                    applicant_email: formData.email,
+                    applicant_phone: formData.phone,
+                    form_data: formData,
+                    document_urls: [] // Simulated
+                })
+
+                if (response.data.success) {
+                    successMsg.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Application submitted successfully! We will review your application and contact you soon.'
+                    successMsg.classList.remove('hidden')
+                    document.getElementById('application-form').reset()
+                    
+                    setTimeout(() => {
+                        closeModal()
+                    }, 3000)
+                }
+            } catch (error) {
+                errorMsg.textContent = error.response?.data?.error || 'Failed to submit application'
+                errorMsg.classList.remove('hidden')
+            } finally {
+                btnText.classList.remove('hidden')
+                btnLoading.classList.add('hidden')
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('form-modal').classList.add('hidden')
+            currentForm = null
+        }
+
+        loadForms()
+    </script>
 </body>
 </html>
   `)
