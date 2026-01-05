@@ -499,6 +499,7 @@ app.get('/', (c) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="/static/images/dicd-logo.png">
         <title>DICD Inclusive College - Empowering Abilities. Transforming Lives.</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
@@ -514,7 +515,7 @@ app.get('/', (c) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                        <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
                         <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -739,7 +740,7 @@ app.get('/login', (c) => {
         <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-lg">
                 <div class="text-center">
-                    <i class="fas fa-graduation-cap text-5xl text-purple-600 mb-4"></i>
+                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-24 mx-auto mb-4">
                     <h2 class="text-3xl font-bold text-gray-900">Sign in to DICD</h2>
                     <p class="mt-2 text-gray-600">Access your learning portal</p>
                 </div>
@@ -837,7 +838,7 @@ app.get('/register', (c) => {
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-lg">
             <div class="text-center">
-                <i class="fas fa-graduation-cap text-5xl text-purple-600 mb-4"></i>
+                <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-24 mx-auto mb-4">
                 <h2 class="text-3xl font-bold text-gray-900">Join DICD</h2>
                 <p class="mt-2 text-gray-600">Create your student account</p>
             </div>
@@ -964,7 +965,7 @@ app.get('/courses', (c) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
                     <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -1060,7 +1061,7 @@ app.get('/about', (c) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
                     <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -1179,7 +1180,7 @@ app.get('/contact', (c) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
                     <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -1340,7 +1341,7 @@ app.get('/services', (c) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
                     <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -1952,7 +1953,7 @@ app.get('/announcements', (c) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
                     <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -2064,7 +2065,7 @@ app.get('/applications', (c) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-3xl text-purple-600 mr-3"></i>
+                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
                     <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
                 </div>
                 <div class="flex items-center space-x-4">
