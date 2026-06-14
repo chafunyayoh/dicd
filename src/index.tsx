@@ -513,25 +513,58 @@ app.get('/', (c) => {
         <!-- Navigation -->
         <nav class="bg-white shadow-lg sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
-                        <span class="font-bold text-xl text-gray-800">DICD Inclusive College</span>
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo and Title (Clickable) -->
+                    <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
+                        <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-10 sm:h-12 mr-2 sm:mr-3">
+                        <span class="font-bold text-base sm:text-lg md:text-xl text-gray-800 whitespace-nowrap">DICD Inclusive College</span>
+                    </a>
+                    
+                    <!-- Desktop Menu -->
+                    <div class="hidden lg:flex items-center space-x-4">
+                        <a href="/" class="text-gray-700 hover:text-purple-600 transition-colors">Home</a>
+                        <a href="/courses" class="text-gray-700 hover:text-purple-600 transition-colors">Courses</a>
+                        <a href="/services" class="text-gray-700 hover:text-purple-600 transition-colors">Services</a>
+                        <a href="/announcements" class="text-gray-700 hover:text-purple-600 transition-colors">Announcements</a>
+                        <a href="/about" class="text-gray-700 hover:text-purple-600 transition-colors">About</a>
+                        <a href="/contact" class="text-gray-700 hover:text-purple-600 transition-colors">Contact</a>
+                        <a href="/donate" class="text-gray-700 hover:text-purple-600 transition-colors">Donate</a>
+                        <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">Login</a>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
-                        <a href="/courses" class="text-gray-700 hover:text-purple-600">Courses</a>
-                        <a href="/services" class="text-gray-700 hover:text-purple-600">Services</a>
-                        <a href="/about" class="text-gray-700 hover:text-purple-600">About</a>
-                        <a href="/contact" class="text-gray-700 hover:text-purple-600">Contact</a>
-                        <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Login</a>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-700 hover:text-purple-600 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Mobile Menu -->
+                <div id="mobileMenu" class="hidden lg:hidden pb-4">
+                    <div class="flex flex-col space-y-2">
+                        <a href="/" class="text-gray-700 hover:text-purple-600 py-2 transition-colors">Home</a>
+                        <a href="/courses" class="text-gray-700 hover:text-purple-600 py-2 transition-colors">Courses</a>
+                        <a href="/services" class="text-gray-700 hover:text-purple-600 py-2 transition-colors">Services</a>
+                        <a href="/announcements" class="text-gray-700 hover:text-purple-600 py-2 transition-colors">Announcements</a>
+                        <a href="/about" class="text-gray-700 hover:text-purple-600 py-2 transition-colors">About</a>
+                        <a href="/contact" class="text-gray-700 hover:text-purple-600 py-2 transition-colors">Contact</a>
+                        <a href="/donate" class="text-gray-700 hover:text-purple-600 py-2 transition-colors">Donate</a>
+                        <a href="/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 text-center transition-colors">Login</a>
                     </div>
                 </div>
             </div>
         </nav>
+        
+        <script>
+            function toggleMobileMenu() {
+                const menu = document.getElementById('mobileMenu');
+                menu.classList.toggle('hidden');
+            }
+        </script>
 
         <!-- Hero Section with Video Background -->
-        <div class="relative h-screen min-h-[600px] overflow-hidden">
+        <div class="relative h-[500px] sm:h-[600px] md:h-[700px] lg:h-screen min-h-[400px] overflow-hidden">
             <!-- Background Video -->
             <video 
                 autoplay 
@@ -548,20 +581,20 @@ app.get('/', (c) => {
             <div class="absolute inset-0 bg-black bg-opacity-50"></div>
             
             <!-- Content on top of video -->
-            <div class="relative z-10 h-full flex items-center justify-center">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                    <h1 class="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+            <div class="relative z-10 h-full flex items-center justify-center px-4">
+                <div class="max-w-7xl mx-auto text-center text-white">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 drop-shadow-lg">
                         Empowering Abilities. Transforming Lives.
                     </h1>
-                    <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto drop-shadow-lg">
+                    <p class="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 max-w-3xl mx-auto drop-shadow-lg px-4">
                         DICD Inclusive College provides inclusive education, vocational training, and psychosocial support
                         for persons with disabilities and vulnerable groups across Malawi.
                     </p>
-                    <div class="space-x-4">
-                        <a href="/courses" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block shadow-lg transform hover:scale-105 transition-transform">
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <a href="/courses" class="bg-white text-purple-600 px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block shadow-lg transform hover:scale-105 transition-transform w-full sm:w-auto text-center">
                             Browse Courses
                         </a>
-                        <a href="/register" class="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 inline-block shadow-lg transform hover:scale-105 transition-transform">
+                        <a href="/register" class="bg-purple-600 text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 inline-block shadow-lg transform hover:scale-105 transition-transform w-full sm:w-auto text-center">
                             Get Started
                         </a>
                     </div>
@@ -570,25 +603,25 @@ app.get('/', (c) => {
         </div>
 
         <!-- Mission & Vision -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-lg shadow-md">
-                    <div class="text-purple-600 text-4xl mb-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
+            <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                    <div class="text-purple-600 text-3xl sm:text-4xl mb-4">
                         <i class="fas fa-eye"></i>
                     </div>
-                    <h2 class="text-2xl font-bold mb-4">Our Vision</h2>
-                    <p class="text-gray-700">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Our Vision</h2>
+                    <p class="text-gray-700 text-sm sm:text-base">
                         To be a leading institution in the provision of inclusive education and empowerment services for
                         persons with disabilities—enhancing self-reliance, business opportunity, employment access,
                         and communication through inclusive education.
                     </p>
                 </div>
-                <div class="bg-white p-8 rounded-lg shadow-md">
-                    <div class="text-purple-600 text-4xl mb-4">
+                <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                    <div class="text-purple-600 text-3xl sm:text-4xl mb-4">
                         <i class="fas fa-bullseye"></i>
                     </div>
-                    <h2 class="text-2xl font-bold mb-4">Our Mission</h2>
-                    <p class="text-gray-700">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Our Mission</h2>
+                    <p class="text-gray-700 text-sm sm:text-base">
                         To empower persons with disabilities and the vulnerable by creating job opportunities,
                         promoting inclusive education, training in sign language and Braille, and enhancing
                         self-reliance and entrepreneurship.
@@ -598,10 +631,10 @@ app.get('/', (c) => {
         </div>
 
         <!-- Programs Overview -->
-        <div class="bg-gray-100 py-16">
+        <div class="bg-gray-100 py-8 sm:py-12 md:py-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-center mb-12">Our Programs</h2>
-                <div class="grid md:grid-cols-3 gap-8">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Our Programs</h2>
+                <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     <div class="bg-white p-6 rounded-lg shadow-md text-center">
                         <div class="text-purple-600 text-5xl mb-4">
                             <i class="fas fa-sign-language"></i>
@@ -672,16 +705,16 @@ app.get('/', (c) => {
             
             <!-- Content -->
             <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                <h2 class="text-4xl font-bold mb-4">Join Us in Making a Difference</h2>
-                <p class="text-xl mb-8">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Join Us in Making a Difference</h2>
+                <p class="text-base sm:text-lg md:text-xl mb-6 md:mb-8 px-2">
                     Whether by sponsoring a child, enrolling in a training course, or funding our programs—you can
                     be the reason someone is empowered today.
                 </p>
-                <div class="space-x-4">
-                    <a href="/contact" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block transform hover:scale-105 transition">
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="/contact" class="bg-white text-purple-600 px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block transform hover:scale-105 transition w-full sm:w-auto text-center">
                         Get In Touch
                     </a>
-                    <a href="/donate" class="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 inline-block transform hover:scale-105 transition">
+                    <a href="/donate" class="bg-green-600 text-white px-6 sm:px-8 py-3 rounded-lg font-semibold hover:bg-green-700 inline-block transform hover:scale-105 transition w-full sm:w-auto text-center">
                         <i class="fas fa-heart mr-2"></i>Donate Now
                     </a>
                 </div>
@@ -689,20 +722,20 @@ app.get('/', (c) => {
         </div>
 
         <!-- Footer -->
-        <footer class="bg-gray-800 text-white py-12">
+        <footer class="bg-gray-800 text-white py-8 sm:py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid md:grid-cols-3 gap-8">
+                <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     <div>
-                        <h3 class="text-xl font-bold mb-4">Contact Us</h3>
-                        <p><i class="fas fa-user mr-2"></i>Moses L. Khembo</p>
-                        <p><i class="fas fa-phone mr-2"></i>+265 991 507 626</p>
-                        <p><i class="fas fa-phone mr-2"></i>+265 880 271 451</p>
-                        <p><i class="fas fa-envelope mr-2"></i>moseskhembo27@gmail.com</p>
-                        <p><i class="fas fa-map-marker-alt mr-2"></i>Private Bag 151, Rumphi, Mzuzu - Malawi</p>
+                        <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Contact Us</h3>
+                        <p class="text-sm sm:text-base mb-2"><i class="fas fa-user mr-2"></i>Moses L. Khembo</p>
+                        <p class="text-sm sm:text-base mb-2"><i class="fas fa-phone mr-2"></i>+265 991 507 626</p>
+                        <p class="text-sm sm:text-base mb-2"><i class="fas fa-phone mr-2"></i>+265 880 271 451</p>
+                        <p class="text-sm sm:text-base mb-2"><i class="fas fa-envelope mr-2"></i>moseskhembo27@gmail.com</p>
+                        <p class="text-sm sm:text-base"><i class="fas fa-map-marker-alt mr-2"></i>Private Bag 151, Rumphi, Mzuzu - Malawi</p>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold mb-4">Quick Links</h3>
-                        <ul class="space-y-2">
+                        <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Quick Links</h3>
+                        <ul class="space-y-2 text-sm sm:text-base">
                             <li><a href="/" class="hover:text-purple-400">Home</a></li>
                             <li><a href="/courses" class="hover:text-purple-400">Courses</a></li>
                             <li><a href="/about" class="hover:text-purple-400">About Us</a></li>

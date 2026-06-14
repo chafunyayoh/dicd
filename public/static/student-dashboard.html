@@ -11,33 +11,33 @@
 <body class="bg-gray-50">
     <nav class="bg-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-12 mr-3">
-                    <span class="font-bold text-xl text-gray-800">DICD Student Portal</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span id="user-name" class="text-gray-700"></span>
-                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
+                    <img src="/static/images/dicd-logo.png" alt="DICD Logo" class="h-10 sm:h-12 mr-2 sm:mr-3">
+                    <span class="font-bold text-base sm:text-lg md:text-xl text-gray-800 hidden sm:inline">DICD Student Portal</span>
+                </a>
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <span id="user-name" class="text-gray-700 text-sm sm:text-base hidden md:inline"></span>
+                    <button onclick="logout()" class="bg-red-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-600 text-sm sm:text-base">
+                        <i class="fas fa-sign-out-alt sm:mr-2"></i><span class="hidden sm:inline">Logout</span>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 class="text-3xl font-bold mb-8">Welcome to Your Learning Portal</h1>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8">Welcome to Your Learning Portal</h1>
 
         <!-- Tabs -->
-        <div class="mb-6 border-b border-gray-200">
-            <nav class="-mb-px flex space-x-8">
+        <div class="mb-4 sm:mb-6 border-b border-gray-200 overflow-x-auto">
+            <nav class="-mb-px flex space-x-4 sm:space-x-8">
                 <button onclick="showTab('my-courses')" id="tab-my-courses" 
-                        class="tab-btn border-b-2 border-purple-600 text-purple-600 py-4 px-1 font-medium">
+                        class="tab-btn border-b-2 border-purple-600 text-purple-600 py-3 sm:py-4 px-1 font-medium text-sm sm:text-base whitespace-nowrap">
                     My Courses
                 </button>
                 <button onclick="showTab('browse-courses')" id="tab-browse-courses" 
-                        class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 font-medium">
+                        class="tab-btn border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-3 sm:py-4 px-1 font-medium text-sm sm:text-base whitespace-nowrap">
                     Browse Courses
                 </button>
             </nav>
@@ -45,9 +45,9 @@
 
         <!-- My Courses Tab -->
         <div id="content-my-courses" class="tab-content">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold mb-4">My Enrolled Courses</h2>
-                <div id="enrolled-courses" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div class="mb-4 sm:mb-6">
+                <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">My Enrolled Courses</h2>
+                <div id="enrolled-courses" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
                 <div id="no-enrollments" class="hidden text-center py-12 text-gray-500">
                     <i class="fas fa-book-open text-5xl mb-4"></i>
                     <p>You haven't enrolled in any courses yet.</p>
